@@ -204,6 +204,29 @@ void ParticleFilter::resample() {
 	// NOTE: You may find std::discrete_distribution helpful here.
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
 
+	// temp vectors for the new set of resampled particles
+	std::vector<Particle> n_particles;
+
+	// create discrete distibution from particles weights
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::discrete_distribution<> d(weights.begin(), weights.end());
+
+	// resample
+	for (unsigned int i=0; i < num_particles; i++) {
+		const int index = d(gen);
+		const Particle new_p = particles[index];
+		n_particles.push_back(new_p);
+	}
+
+	// clear Particle vectors
+	particles.clear();
+	weights.clear();
+
+	// new set of particles
+	particles = n_particles;
+
+	std::cout << "ParticleFilter::resample()" << std::endl;
 }
 
 Particle ParticleFilter::SetAssociations(Particle& particle, const std::vector<int>& associations, 
@@ -216,6 +239,8 @@ Particle ParticleFilter::SetAssociations(Particle& particle, const std::vector<i
 	particle.associations = associations;
 	particle.sense_x = sense_x;
 	particle.sense_y = sense_y;
+
+	return particle;
 }
 
 std::string ParticleFilter::getAssociations(Particle best) {
