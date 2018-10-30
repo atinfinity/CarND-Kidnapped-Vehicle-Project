@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
-project(particle_filter)
 
+project(particle_filter)
 add_definitions(-std=c++11)
 
 set(CXX_FLAGS "-Wall")
@@ -17,3 +17,4 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 add_executable(${PROJECT_NAME} ${sources})
 target_link_libraries(${PROJECT_NAME} z ssl uv uWS)
+

@@ -23,19 +23,20 @@ struct Particle {
 	std::vector<double> sense_y;
 };
 
+
+
 class ParticleFilter {
-	
+
 	// Number of particles to draw
-	int num_particles; 
-	
+	unsigned int num_particles; 
+
 	// Flag, if filter is initialized
 	bool is_initialized;
-	
+
 	// Vector of weights of all particles
 	std::vector<double> weights;
 	
 public:
-	
 	// Set of current particles
 	std::vector<Particle> particles;
 
@@ -67,7 +68,7 @@ public:
 	 * @param yaw_rate Yaw rate of car from t to t+1 [rad/s]
 	 */
 	void prediction(double delta_t, double std_pos[], double velocity, double yaw_rate);
-	
+
 	/**
 	 * dataAssociation Finds which observations correspond to which landmarks (likely by using
 	 *   a nearest-neighbors data association).
@@ -75,7 +76,7 @@ public:
 	 * @param observations Vector of landmark observations
 	 */
 	void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
-	
+
 	/**
 	 * updateWeights Updates the weights for each particle based on the likelihood of the 
 	 *   observed measurements. 
@@ -86,7 +87,7 @@ public:
 	 */
 	void updateWeights(double sensor_range, double std_landmark[], const std::vector<LandmarkObs> &observations,
 			const Map &map_landmarks);
-	
+
 	/**
 	 * resample Resamples from the updated set of particles to form
 	 *   the new set of particles.

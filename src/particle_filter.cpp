@@ -9,15 +9,15 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
-#include <math.h> 
+#include <cmath> 
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <iterator>
+#include <random>
 
 #include "particle_filter.h"
-
-using namespace std;
 
 void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// TODO: Set the number of particles. Initialize all particles to first position (based on estimates of 
@@ -25,6 +25,30 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// Add random Gaussian noise to each particle.
 	// NOTE: Consult particle_filter.h for more information about this method (and others in this file).
 
+	std::default_random_engine gen;
+	std::normal_distribution<double> dist_x(x, std[0]);
+	std::normal_distribution<double> dist_y(y, std[1]);
+	std::normal_distribution<double> dist_theta(theta, std[2]);
+
+	//set the number of particles
+	num_particles = 50; 
+
+	//create a temp vector of particles
+	std::vector<Particle> n_particles;
+	//create the particles
+	for(unsigned int i=0; i < num_particles; i++){    
+		Particle p = {};
+		p.id       = i;
+		//add noise
+		p.x        = dist_x(gen);
+		p.y        = dist_y(gen);
+		p.theta    = dist_theta(gen);
+		p.weight   = 1;
+		n_particles.push_back(p);
+	}
+	particles = n_particles;
+	is_initialized = true;
+	std::cout << "ParticleFilter::init()" << std::endl;
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
@@ -65,42 +89,40 @@ void ParticleFilter::resample() {
 }
 
 Particle ParticleFilter::SetAssociations(Particle& particle, const std::vector<int>& associations, 
-                                     const std::vector<double>& sense_x, const std::vector<double>& sense_y)
-{
+                                     const std::vector<double>& sense_x, const std::vector<double>& sense_y) {
 	//particle: the particle to assign each listed association, and association's (x,y) world coordinates mapping to
 	// associations: The landmark id that goes along with each listed association
 	// sense_x: the associations x mapping already converted to world coordinates
 	// sense_y: the associations y mapping already converted to world coordinates
 
-	particle.associations= associations;
+	particle.associations = associations;
 	particle.sense_x = sense_x;
 	particle.sense_y = sense_y;
 }
 
-string ParticleFilter::getAssociations(Particle best)
-{
-	vector<int> v = best.associations;
-	stringstream ss;
-	copy( v.begin(), v.end(), ostream_iterator<int>(ss, " "));
-	string s = ss.str();
+std::string ParticleFilter::getAssociations(Particle best) {
+	std::vector<int> v = best.associations;
+	std::stringstream ss;
+	std::copy(v.begin(), v.end(), std::ostream_iterator<int>(ss, " "));
+	std::string s = ss.str();
 	s = s.substr(0, s.length()-1);  // get rid of the trailing space
 	return s;
 }
-string ParticleFilter::getSenseX(Particle best)
-{
-	vector<double> v = best.sense_x;
-	stringstream ss;
-	copy( v.begin(), v.end(), ostream_iterator<float>(ss, " "));
-	string s = ss.str();
+
+std::string ParticleFilter::getSenseX(Particle best) {
+	std::vector<double> v = best.sense_x;
+	std::stringstream ss;
+	std::copy(v.begin(), v.end(), std::ostream_iterator<float>(ss, " "));
+	std::string s = ss.str();
 	s = s.substr(0, s.length()-1);  // get rid of the trailing space
 	return s;
 }
-string ParticleFilter::getSenseY(Particle best)
-{
-	vector<double> v = best.sense_y;
-	stringstream ss;
-	copy( v.begin(), v.end(), ostream_iterator<float>(ss, " "));
-	string s = ss.str();
+
+std::string ParticleFilter::getSenseY(Particle best) {
+	std::vector<double> v = best.sense_y;
+	std::stringstream ss;
+	std::copy(v.begin(), v.end(), std::ostream_iterator<float>(ss, " "));
+	std::string s = ss.str();
 	s = s.substr(0, s.length()-1);  // get rid of the trailing space
 	return s;
 }
