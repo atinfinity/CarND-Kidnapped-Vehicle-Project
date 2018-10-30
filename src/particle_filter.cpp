@@ -47,7 +47,6 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	}
 	particles = n_particles;
 	is_initialized = true;
-	std::cout << "ParticleFilter::init()" << std::endl;
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
@@ -86,8 +85,6 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 		p.y = new_y + dist_y(gen);
 		p.theta = new_theta + dist_theta(gen); 
 	}
-
-	std::cout << "ParticleFilter::prediction()" << std::endl;
 }
 
 void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations) {
@@ -107,8 +104,6 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 			}
 		}
 	}
-
-	std::cout << "ParticleFilter::dataAssociation()" << std::endl;
 }
 
 void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], 
@@ -195,8 +190,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		// update particle's associations
 		SetAssociations(p, associations, sense_x, sense_y);
 	}
-
-	std::cout << "ParticleFilter::updateWeights()" << std::endl;
 }
 
 void ParticleFilter::resample() {
@@ -225,8 +218,6 @@ void ParticleFilter::resample() {
 
 	// new set of particles
 	particles = n_particles;
-
-	std::cout << "ParticleFilter::resample()" << std::endl;
 }
 
 Particle ParticleFilter::SetAssociations(Particle& particle, const std::vector<int>& associations, 
