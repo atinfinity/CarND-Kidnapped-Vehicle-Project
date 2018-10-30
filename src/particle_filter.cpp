@@ -36,7 +36,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	//create a temp vector of particles
 	std::vector<Particle> n_particles;
 	//create the particles
-	for(unsigned int i=0; i < num_particles; i++){    
+	for (unsigned int i=0; i < num_particles; i++) {
 		Particle p = {};
 		p.id       = i;
 		//add noise
@@ -57,6 +57,38 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	//  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
 
+	//create normal distributions (Gaussian) for x, y and theta
+	std::default_random_engine gen;
+	std::normal_distribution<double> dist_x(0, std_pos[0]);
+	std::normal_distribution<double> dist_y(0, std_pos[1]);
+	std::normal_distribution<double> dist_theta(0, std_pos[2]);
+
+	//loop particles and access by reference
+	for (Particle& p: particles) {
+		//compute new position and theta
+		double new_theta = 0.0;
+		double new_x = 0.0;
+		double new_y = 0.0;
+		//check if yaw_rate is equal to zero
+		if (std::abs(yaw_rate) == 0.0) {
+			// moving straight
+			new_x = p.x + (velocity*delta_t*cos(p.theta));
+			new_y = p.y + (velocity*delta_t*sin(p.theta));
+			new_theta = p.theta;
+		}
+		else {
+			// turning
+			new_theta = p.theta + yaw_rate*delta_t;
+			new_x = p.x + (velocity/yaw_rate)*(sin(new_theta) - sin(p.theta));
+			new_y = p.y + (velocity/yaw_rate)*(cos(p.theta) - cos(new_theta));      
+		}
+		//update particle
+		p.x = new_x + dist_x(gen);
+		p.y = new_y + dist_y(gen);
+		p.theta = new_theta + dist_theta(gen); 
+	}
+
+	std::cout << "ParticleFilter::prediction()" << std::endl;
 }
 
 void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations) {
